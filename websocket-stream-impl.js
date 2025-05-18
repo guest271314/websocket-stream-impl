@@ -16,7 +16,7 @@ class WebSocketStreamImpl {
         this.protocols = options.protocols;
       }
       if (options?.signal) {
-        this.signal = signal;
+        this.signal = options.signal;
         this.signal.addEventListener("abort", async (e) => {
           try {
             this.#closedPromise.reject(
