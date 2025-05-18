@@ -31,11 +31,10 @@ class WebSocketStreamImpl {
       }
       this.#openedPromise.promise.catch(() => {});
       this.closed = this.#closedPromise.promise;
-      this.opened = new Promise(async (resolve, reject) => {
+      this.opened = new Promise((r) => {
+          setTimeout(r, 1);
+          }).then(() => new Promise(async (resolve, reject) => {
         try {
-          await new Promise((r) => {
-            setTimeout(r, 1);
-          });
           const aborted = this.signal?.aborted;
           if (aborted) {
             throw null;
@@ -44,9 +43,12 @@ class WebSocketStreamImpl {
           this.#openedPromise.promise.catch((e) => reject(e));
           return;
         }
-        this.#ws = new WebSocket(url, {
-          protocols: this.protocols
-        });
+        // For Deno, throws when protocols is empty Array []
+        const args = [url, {protocols: this.protocols}];
+        if (this.protocols.length === 0) {
+          args.pop();
+        }
+        this.#ws = new WebSocket(...args);
         this.#ws.binaryType = "arraybuffer";
         this.#ws.addEventListener("open", (e) => {
           this.readable = new ReadableStream({
@@ -109,8 +111,10 @@ class WebSocketStreamImpl {
         });
       }).catch((e) => {
         throw e;
-      });
-    } catch {}
+      }));
+    } catch (e) {
+       throw e;
+    }
   }
   close({ code = 1000, reason = "" } = {}) {
     new Promise((r) => {
