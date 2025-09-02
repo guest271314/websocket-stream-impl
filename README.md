@@ -1,5 +1,14 @@
 # websocket-stream-impl
-JavaScript runtime agnostic WebSocketStream implementation
+JavaScript runtime agnostic `WebSocketStream` implementation.
+
+# Usage
+
+```
+import { WebSocketStreamImpl } from "./websocket-stream-impl.js";
+if (!Object.hasOwn(globalThis, "WebSocketStream")) {
+  globalThis.WebSocketStream = WebSocketStreamImpl;
+}
+```
 
 # References
 
