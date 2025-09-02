@@ -106,14 +106,12 @@ class WebSocketStreamImpl {
       throw e;
     }
   }
-  close({ code = 1000, reason = "" } = {}) {
+  close({ closeCode = 1000, reason = "" } = {}) {
     console.log(this.#ws.readyState);
-    try {
-      this.#ws.close(code, reason);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      this.#handleCloseEvent({ code: 1000, reason: "Done streaming" });
+    if (navigator.userAgent.includes("Node")) {
+      this.handleCloseEvent({ code: closeCode, reason });    
+    } else {
+      this.#ws.close(closeCode, reason);
     }
   }
 }
