@@ -6,7 +6,7 @@ JavaScript runtime agnostic `WebSocketStream` implementation.
 ```
 import { WebSocketStreamImpl } from "./websocket-stream-impl.js";
 if (!Object.hasOwn(globalThis, "WebSocketStream")) {
-  globalThis.WebSocketStream = WebSocketStreamImpl;
+  globalThis.WebSocketStream = class WebSocketStream extends WebSocketStreamImpl {};
 }
 ```
 
