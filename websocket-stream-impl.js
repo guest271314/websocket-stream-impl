@@ -24,8 +24,8 @@ class WebSocketStreamImpl {
           try {
             this.#closedPromise.reject(new DOMException("WebSocket handshake was aborted", "ABORT_ERR"));
             this.#openedPromise.reject(new DOMException("WebSocket handshake was aborted", "ABORT_ERR"));
-          } catch (e) {
-            console.log(e);
+          } catch (e2) {
+            console.log(e2);
           }
         });
       }
@@ -49,7 +49,6 @@ class WebSocketStreamImpl {
         }
         this.#handleCloseEvent = function handleCloseEvent(e) {
           const { code, reason } = e;
-          console.log("close event", e);
           try {
             if (this.#readable.locked) {
               this.#readableController.close();
@@ -58,7 +57,7 @@ class WebSocketStreamImpl {
               this.#writable.close().catch(() => {});
             }
             this.#closedPromise.resolve({ closeCode: code, reason });
-          } catch (e) {}
+          } catch (e2) {}
         };
         this.#ws = new WebSocket(...args);
         this.#ws.binaryType = "arraybuffer";
@@ -70,7 +69,6 @@ class WebSocketStreamImpl {
           this.#readableController.enqueue(e.data);
         });
         this.#ws.addEventListener("open", (e) => {
-          console.log(e, this);
           this.#readable = new ReadableStream({
             start: (c) => {
               this.#readableController = c;
@@ -107,9 +105,8 @@ class WebSocketStreamImpl {
     }
   }
   close({ closeCode = 1000, reason = "" } = {}) {
-    console.log(this.#ws.readyState);
     if (navigator.userAgent.includes("Node")) {
-      this.handleCloseEvent({ code: closeCode, reason });    
+      this.#handleCloseEvent({ code: closeCode, reason });
     } else {
       this.#ws.close(closeCode, reason);
     }
